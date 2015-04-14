@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact Example</title>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        document.addEventListener("deviceready", onDeviceReady, false);
+
+        function onDeviceReady() {
+            document.getElementById("search-button").addEventListener("click", clickSearch);
+        }
+
+        function clickSearch() {
+            var ul = document.getElementById("list");
+            for (x = 0; x < ul.children.length; x++) {
+                ul.removeChild(ul.childNodes[x]);
+            }
+
+            var options = new ContactFindOptions();
+
+            options.filter = document.getElementById("search-name").value;
+            options.multiple = true;
+
+            navigator.contacts.find(["*"], onSuccess, onError, options);
+        }
+
+        function onSuccess(contacts) {
+            for (i = 0; i < contacts.length; i++) {
+                addItem(contacts[i]);
+            }
+        }
+
+        function addItem(contact) {
+            var li = document.createElement("li");
+
+            li.appendChild(document.createTextNode(contact.name.formatted));
+
+            if (contact.phoneNumbers) {
+                var newUl = document.createElement("ul");
+                for (x = 0; x < contact.phoneNumbers.length; x++) {
+                    var newLi = document.createElement("li");
+                    newLi.appendChild(document.createTextNode(contact.phoneNumbers[x].value));
+                    newUl.appendChild(newLi);
+                }
+                li.appendChild(newUl);
+            }
+
+            document.getElementById("list").appendChild(li);
+        }
+
+        function onError(contactError) {
+            alert('onError! ' + contactError);
+        }
+    </script>
+</head>
+
+<body>
+<p>Find Contacts</p>
+
+<input type="text" id="search-name" placeholder="enter name...">
+<input type="button" id="search-button" value="SEARCH">
+
+<ul id="list">
+</ul>
+
+</body>
+
+</html>
